@@ -1,0 +1,24 @@
+{
+    "name": "pimolo/dic",
+    "description": "A simple and PSR-11 compliant dependency injection container. Do not use it in production.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rémi Andrieux",
+            "email": "contact@remiandrieux.fr"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"Pimolo\\DIC\\": "lib"}
+    },
+    "autoload-dev": {
+        "psr-4": {"Tests\\": "tests"}
+    },
+    "require": {
+        "psr/container": "^1.0"
+    },
+    "provide": {
+        "psr/container-implementation": "1.0.0"
+    }
+}
