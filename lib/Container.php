@@ -43,24 +43,30 @@ class Container implements ContainerInterface
     /**
      * Assigns a valid entry identifier to an instance.
      *
-     * @param string $id Entry identifier
      * @param callable $factory A closure that returns an instance.
+     * @param string|null $id Entry identifier, defaults to the FQCN.
      */
-    public function set($id, callable $factory)
+    public function set(callable $factory, $id = null)
     {
-        $this->validateEntryIdentifier($id);
+        $instance = $factory($this);
 
-        $this->container[$id] = $factory($this);
+        $entry = $id ?? get_class($instance);
+
+        $this->validateEntryIdentifier($entry);
+
+        $this->container[$entry] = $instance;
     }
 
     /**
      * 1. Validates that the entry is PSR-11 compliant.
-     * 2. We anyway need to ensure we only deal with an unique type for entries (strings).
-     *    Otherwise, since instances are contained in an array we could have collisions
+     * 2. It's anyway needed to ensure the container only deals with an unique type for entries (strings).
+     *    Otherwise, since instances are contained in an array there could are collisions
      *    because of non strict types.
      *
+     * Please note it is "protected" only for testing purposes, and it's not a good thing to override it.
+     *
      * @param mixed $id Entry identifier
-     * @throws InvalidEntryIdentifierException The entry is not PSR-11 compliant.
+     * @throws InvalidEntryIdentifierException When the entry is not PSR-11 compliant.
      */
     protected function validateEntryIdentifier($id)
     {
