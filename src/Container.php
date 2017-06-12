@@ -37,11 +37,11 @@ class Container implements ContainerInterface
     {
         $this->validateEntryIdentifier($id);
 
-        return isset($this->container[$id]);
+        return array_key_exists($id, $this->container);
     }
 
     /**
-     * Assigns a valid entry identifier to an instance.
+     * Assigns a valid identifier to an instance.
      *
      * @param callable $factory A closure that returns an instance.
      * @param string|null $id Entry identifier, defaults to the FQCN.
@@ -50,25 +50,23 @@ class Container implements ContainerInterface
     {
         $instance = $factory($this);
 
-        $entry = $id ?? get_class($instance);
+        $identifier = $id ?? get_class($instance);
 
-        $this->validateEntryIdentifier($entry);
+        $this->validateEntryIdentifier($identifier);
 
-        $this->container[$entry] = $instance;
+        $this->container[$identifier] = $instance;
     }
 
     /**
-     * 1. Validates that the entry is PSR-11 compliant.
-     * 2. It's anyway needed to ensure the container only deals with an unique type for entries (strings).
-     *    Otherwise, since instances are contained in an array there could are collisions
-     *    because of non strict types.
-     *
-     * Please note it is "protected" only for testing purposes, and it's not a good thing to override it.
+     * Validates that the identifier is PSR-11 compliant.
+     * It's anyway needed to ensure the container only deals with an unique type for identifiers.
+     * Otherwise, since instances are contained in an array there could are collisions
+     * because of non strict types.
      *
      * @param mixed $id Entry identifier
-     * @throws InvalidEntryIdentifierException When the entry is not PSR-11 compliant.
+     * @throws InvalidEntryIdentifierException When the identifier is not PSR-11 compliant.
      */
-    protected function validateEntryIdentifier($id)
+    private function validateEntryIdentifier($id)
     {
         if (!is_string($id) || (strlen($id) < 1)) {
             throw new InvalidEntryIdentifierException;
